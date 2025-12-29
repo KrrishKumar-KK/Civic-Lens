@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Civic Lens | India's Voter Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background: #020617;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Fixed Background Image */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.1), rgba(2, 6, 23, 0.4), #020617),
+                        url('image_43da8b.png');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+            filter: brightness(0.6) contrast(1.1);
+        }
+
+        .hero-pattern {
+            background-image: radial-gradient(#f97316 0.5px, transparent 0.5px), radial-gradient(#138808 0.5px, transparent 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.05;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(249, 115, 22, 0.4);
+        }
+
+        /* Seamless Infinite Loop Marquee */
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-container {
+            overflow: hidden;
+            user-select: none;
+            display: flex;
+            width: 100%;
+        }
+
+        .animate-scroll {
+            animation: scroll 40s linear infinite;
+            display: flex;
+            width: max-content;
+        }
+
+        .animate-scroll:hover {
+            animation-play-state: paused;
+        }
+
+        .party-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .party-icon:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(249, 115, 22, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .party-name {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .party-icon:hover .party-name { color: #ffffff; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #f97316;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link.active::after, .nav-link:hover::after { width: 100%; }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Fact Check UI */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+        }
+        .status-verified { background: rgba(34, 197, 94, 0.1); color: #4ade80; border-color: rgba(34, 197, 94, 0.2); }
+        .status-false { background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.2); }
+        .status-unverified { background: rgba(251, 191, 36, 0.1); color: #fbbf24; border-color: rgba(251, 191, 36, 0.2); }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+        .result-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover { border-color: #f97316; background: rgba(15, 23, 42, 0.7); }
+        .result-title a { color: #fff; text-decoration: none; font-size: 1.25rem; font-weight: 700; line-height: 1.3; }
+        .result-title a:hover { color: #f97316; }
+        .result-desc { color: #94a3b8; font-size: 0.95rem; margin: 1rem 0; line-height: 1.6; }
+        .result-meta { font-size: 0.8rem; color: #64748b; font-weight: 600; }
+        .result-reason { font-size: 0.85rem; color: #fed7aa; background: rgba(249, 115, 22, 0.05); padding: 0.75rem; border-radius: 0.75rem; margin-top: 1rem; border-left: 3px solid #f97316; }
+        .result-tag { font-size: 0.7rem; background: rgba(255, 255, 255, 0.05); padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.5rem; color: #cbd5e6; font-weight: 700; text-transform: uppercase; }
+
+        .timeline-item { position: relative; padding-left: 2.5rem; margin-bottom: 2rem; }
+        .timeline-dot { position: absolute; left: 0; top: 0.5rem; width: 1rem; height: 1rem; background: #f97316; border-radius: 50%; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5); }
+        .timeline-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 1.25rem; }
+        .timeline-chip { font-size: 0.7rem; font-weight: 800; color: #f97316; background: rgba(249, 115, 22, 0.1); padding: 0.2rem 0.5rem; border-radius: 4px; }
+
+        .myth-card { background: rgba(239, 68, 68, 0.03); border: 1px solid rgba(239, 68, 68, 0.1); padding: 2rem; border-radius: 1.5rem; }
+        .myth-label { color: #f87171; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .fact-label { color: #4ade80; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+        /* Quiz Buttons */
+        .quiz-option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .quiz-option-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #f97316;
+            transform: scale(1.02);
+        }
+
+        /* Video Styles */
+        .video-thumbnail { transition: all 0.3s ease; cursor: pointer; border-radius: 1rem; border: 2px solid transparent; }
+        .video-active { border-color: #f97316 !important; background-color: rgba(249, 115, 22, 0.1) !important; }
+
+        /* Chat Widget */
+        .chat-widget { position: fixed; bottom: 2rem; right: 2rem; z-index: 100; }
+        .chat-toggle { width: 4rem; height: 4rem; border-radius: 50%; background: #f97316; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3); transition: transform 0.3s; border: none; }
+        .chat-toggle:hover { transform: scale(1.1); }
+        .chat-toggle-inner { color: white; font-size: 1.5rem; }
+        
+        .chat-window { position: absolute; bottom: 5.5rem; right: 0; width: 380px; height: 550px; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: blur(20px); }
+        .chat-header { background: #1e293b; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .chat-title { color: white; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .chat-subtitle { color: #94a3b8; font-size: 0.7rem; font-weight: 500; text-align: left; }
+        .chat-close { color: #64748b; font-size: 1.2rem; cursor: pointer; background: none; border: none; }
+        .chat-close:hover { color: white; }
+
+        .chat-messages { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+        .chat-message-row { display: flex; width: 100%; }
+        .chat-message-row.user { justify-content: flex-end; }
+        .chat-bubble { padding: 0.8rem 1rem; border-radius: 1rem; font-size: 0.85rem; line-height: 1.5; max-width: 85%; font-weight: 500; text-align: left; }
+        .chat-bubble.assistant { background: #334155; color: #f1f5f9; border-bottom-left-radius: 0; }
+        .chat-bubble.user { background: #f97316; color: #fff; border-bottom-right-radius: 0; }
+
+        .chat-footer { padding: 1rem; background: #1e293b; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .chat-quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+        .chat-quick { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #cbd5e6; padding: 0.5rem; border-radius: 0.75rem; font-size: 0.65rem; font-weight: 700; text-align: center; transition: all 0.2s ease; cursor: pointer; }
+        .chat-quick:hover { background: #f97316; color: white; border-color: #f97316; }
+        .chat-input-row { display: flex; gap: 0.5rem; }
+        .chat-input-row input { flex: 1; background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.75rem; padding: 0.6rem 1rem; color: white; font-size: 0.8rem; outline: none; }
+        .chat-input-row input:focus { border-color: #f97316; }
+        .chat-input-row button { background: #f97316; color: white; border: none; border-radius: 0.75rem; width: 2.5rem; height: 2.5rem; font-weight: bold; cursor: pointer; }
+
+        /* Footer Custom Styling */
+        footer { background: rgba(2, 6, 23, 0.8); backdrop-blur: 10px; padding: 5rem 1.5rem 3rem; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .footer-inner { max-width: 80rem; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4rem; margin-bottom: 4rem; }
+        .footer-title { color: #ffffff; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem; }
+        .footer-text { color: #94a3b8; font-size: 0.875rem; line-height: 1.7; }
+        .footer-links a { display: block; color: #94a3b8; font-size: 0.875rem; margin-bottom: 0.75rem; transition: all 0.2s ease; text-decoration: none; font-weight: 500; }
+        .footer-links a:hover { color: #f97316; transform: translateX(4px); }
+        .footer-bottom { max-width: 80rem; margin: 0 auto; padding-top: 3rem; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; }
+        .footer-brand-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem; }
+        .footer-logo { width: 3rem; height: 3rem; object-fit: contain; margin-bottom: 1rem; }
+        .footer-brand { font-weight: 900; color: #ffffff; font-size: 1.5rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: -0.01em; }
+        .footer-disclaimer { color: #64748b; font-size: 0.75rem; max-width: 45rem; margin: 0 auto; line-height: 1.5; font-weight: 600; }
+    </style>
+</head>
+<body class="antialiased min-h-screen text-center lg:text-left text-white">
+
+    <div class="hero-bg"></div>
+
+    <!-- PERSISTENT HEADER -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" 
+                     alt="Civic Lens" 
+                     class="w-12 h-12 object-contain"
+                     onerror="this.style.display='none'">
+                <div>
+                    <h1 class="font-extrabold text-lg leading-tight tracking-tight uppercase text-white">Civic <span class="text-blue-500">Lens</span></h1>
+                    <p class="text-[10px] tracking-[0.2em] text-orange-500 font-bold uppercase">Truth • Unity • Democracy</p>
+                </div>
+            </div>
+            
+            <nav class="flex items-center gap-4 md:gap-8 text-xs md:text-sm font-semibold tracking-wide">
+                <a onclick="showTab('home')" id="nav-home" class="nav-link text-white active">Home</a>
+                <a onclick="showTab('factcheck')" id="nav-factcheck" class="nav-link text-slate-400 hover:text-white">Fact Check</a>
+                <a onclick="scrollToSection('updates')" class="nav-link text-slate-400 hover:text-white">Updates</a>
+                <a onclick="showTab('learn')" id="nav-learn" class="nav-link text-slate-400 hover:text-white">Learn</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- VIEW: HOME DASHBOARD -->
+    <div id="view-home" class="fade-in pt-20">
+        <section class="relative min-h-[85vh] flex items-center justify-center text-center px-6 overflow-hidden">
+            <div class="absolute inset-0 hero-pattern z-0"></div>
+            <div class="max-w-4xl relative z-10 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-[0.2em] mb-6 font-black">Empowering Indian Voters</span>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-[1.1] text-white uppercase">
+                    Democracy is Better with <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-green-500">The Truth.</span>
+                </h2>
+                <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">
+                    Your non-partisan digital gateway for voter registration, real-time election insights, and verified facts.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="https://electoralsearch.eci.gov.in/" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-500 transition-all shadow-xl shadow-orange-900/40 transform hover:scale-105">
+                        Find My Polling Station
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <main class="max-w-7xl mx-auto px-6 py-24 text-left">
+            <div class="mb-24">
+                <h3 class="text-2xl font-bold flex items-center gap-3 text-white mb-8">
+                    <span class="w-8 h-1 bg-orange-500 rounded-full"></span>
+                    Essential Voter Tools
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <a href="https://electoralsearch.eci.gov.in/" target="_blank" class="group glass-card p-10 block card-hover transition-all">
+                        <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center text-2xl mb-8 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-address-card text-blue-500"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-4 text-white uppercase tracking-tight">Voter Verification</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">Confirm your registration and exact polling booth details instantly via the Official ECI portal.</p>
+                        <span class="text-blue-400 font-bold uppercase tracking-widest text-xs">Access ECI Portal ➔</span>
+                    </a>
+                    <div onclick="showTab('factcheck')" class="group glass-card p-10 cursor-pointer card-hover transition-all">
+                        <div class="w-14 h-14 bg-orange-500/20 rounded-2xl flex items-center justify-center text-2xl mb-8 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-magnifying-glass text-orange-500"></i>
+                        </div>
+                        <h4 class="text-2xl font-bold mb-4 text-white uppercase tracking-tight">Claim Analysis</h4>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-8">Counter misinformation. Check election claims against recent news coverage and verified data.</p>
+                        <span class="text-orange-400 font-bold uppercase tracking-widest text-xs">Verify Claims Now ➔</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="updates" class="space-y-12">
+                <h3 class="text-2xl font-bold flex items-center gap-3 text-white">
+                    <span class="w-8 h-1 bg-blue-500 rounded-full"></span>
+                    Live Feed & Analytics
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <article class="glass-card p-8 hover:bg-white/5 transition-colors border-l-4 border-orange-500 flex flex-col justify-between">
+                        <div>
+                            <time class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Official Source</time>
+                            <h5 class="text-xl font-bold my-4 text-white uppercase tracking-tight">ECI Current Elections</h5>
+                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">Real-time status of ongoing state assembly and parliamentary polls across India.</p>
+                        </div>
+                        <a href="https://www.eci.gov.in/assembly-elections-new" target="_blank" class="text-xs font-bold text-orange-400 hover:underline uppercase tracking-widest">View Portal</a>
+                    </article>
+                    <article class="glass-card p-8 hover:bg-white/5 transition-colors border-l-4 border-blue-500 flex flex-col justify-between">
+                        <div>
+                            <time class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Institutional Data</time>
+                            <h5 class="text-xl font-bold my-4 text-white uppercase tracking-tight">Regional Trends</h5>
+                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">Breakdown of polling percentage's.</p>
+                        </div>
+                        <a href="https://voterturnout-gov.streamlit.app" target="_blank" class="text-xs font-bold text-blue-400 hover:underline uppercase tracking-widest">Explore Data</a>
+                    </article>
+                    <article class="glass-card p-8 hover:bg-white/5 transition-colors border-l-4 border-green-500 flex flex-col justify-between">
+                        <div>
+                            <time class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Press Updates</time>
+                            <h5 class="text-xl font-bold my-4 text-white uppercase tracking-tight">Constitutional Roadmap</h5>
+                            <p class="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">legal roadmap for implementing reforms</p>
+                        </div>
+                        <a href="https://vajiramandravi.com/current-affairs/amendment-of-constitution/" target="_blank" class="text-xs font-bold text-green-400 hover:underline uppercase tracking-widest">Read More</a>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- VIEW: FACT CHECK -->
+    <div id="view-factcheck" class="fade-in hidden pt-24 pb-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <header class="mb-16">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-black uppercase tracking-[0.2em] mb-6">Verification Engine</span>
+                <h2 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight leading-[1.1] text-white uppercase">
+                    Verify Claims with <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-green-500">Real Evidence</span>
+                </h2>
+                <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed drop-shadow-lg font-medium">Cross-reference election claims against live global news databases. Identify misinformation instantly using our evidence-based stream.</p>
+            </header>
+
+            <div class="glass-card p-10 max-w-3xl mx-auto mb-24 border border-white/5 shadow-2xl">
+                <div class="flex gap-4 flex-col sm:flex-row text-left">
+                    <input id="queryInput" type="text" placeholder="e.g., 'EVM security', 'polling booth status'" 
+                            class="flex-1 bg-slate-900/50 border border-slate-700 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-orange-500 transition shadow-inner font-medium">
+                    <button id="scanButton" onclick="verifyClaim()" class="bg-orange-600 hover:bg-orange-500 text-white font-black py-4 px-10 rounded-2xl transition-all shadow-xl uppercase tracking-widest text-xs transform hover:scale-105">
+                        Verify
+                    </button>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-5 font-black uppercase tracking-widest">Strict India-Election results filter active</p>
+            </div>
+
+            <section class="mb-24 text-left">
+                <div class="flex items-center gap-3 mb-12">
+                    <span class="w-8 h-1 bg-orange-500 rounded-full"></span>
+                    <h2 class="text-2xl font-extrabold text-white uppercase tracking-tight">Election Verification Stream</h2>
+                </div>
+                <div id="loadingBox" class="hidden py-24 text-center">
+                    <div class="inline-block w-14 h-14 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="mt-8 text-slate-400 font-black uppercase text-xs tracking-[0.3em] animate-pulse">Scanning Election Repositories...</p>
+                </div>
+                <div id="resultsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+                <p id="resultsNote" class="hidden text-slate-500 text-center py-12 font-bold italic"></p>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 mb-24 text-left">
+                <div class="lg:col-span-7">
+                    <div class="flex items-center gap-3 mb-10">
+                        <span class="w-8 h-1 bg-blue-500 rounded-full"></span>
+                        <h2 class="text-2xl font-extrabold text-white uppercase tracking-tight">Policy Timeline</h2>
+                    </div>
+                    <ul id="timelineList" class="space-y-5"></ul>
+                </div>
+                <div class="lg:col-span-5">
+                    <div class="flex items-center gap-3 mb-10">
+                        <span class="w-8 h-1 bg-red-500 rounded-full"></span>
+                        <h2 class="text-2xl font-extrabold text-white uppercase tracking-tight">Myth Buster</h2>
+                    </div>
+                    <div id="mythsGrid" class="space-y-6"></div>
+                </div>
+            </div>
+            
+            <div class="glass-card rounded-[2rem] p-10 border border-white/5 mb-24 relative overflow-hidden text-left">
+                <div class="absolute top-0 right-0 p-8 opacity-5"><i class="fa-solid fa-pen-nib text-6xl text-white"></i></div>
+                <div class="flex items-center gap-3 mb-8">
+                    <span class="w-8 h-1 bg-green-500 rounded-full"></span>
+                    <h2 class="text-2xl font-bold text-white uppercase tracking-tight">Fact-Check Notebook</h2>
+                </div>
+                <textarea id="notesArea" placeholder="Capture your findings here while you verify claims..." 
+                          class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-8 text-white placeholder-slate-600 focus:outline-none focus:border-orange-500 transition min-h-[250px] resize-none leading-relaxed shadow-inner font-medium"></textarea>
+                <div class="flex justify-between items-center mt-8">
+                    <p id="notesStatus" class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Auto-saved to local browser cache</p>
+                    <button onclick="clearNotes()" class="bg-red-900/20 text-red-400 hover:bg-red-600 hover:text-white px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">Reset Notebook</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: LEARN -->
+    <div id="view-learn" class="fade-in hidden pt-20">
+        <header class="relative overflow-hidden pt-16 pb-24 text-center text-white">
+            <div class="absolute inset-0 hero-pattern z-0"></div>
+            <div class="max-w-7xl mx-auto px-4 relative z-10">
+                <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight uppercase">
+                    The World's Largest <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-green-600">Democracy</span>
+                </h1>
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 leading-relaxed font-medium">Exploring the mechanisms and future reforms of the Indian Electoral System through immersive media and data.</p>
+                <div class="mt-10 flex flex-wrap justify-center gap-4">
+                    <button onclick="document.getElementById('learn-visuals').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 bg-orange-600 text-white font-bold rounded-xl shadow-xl transition-all transform hover:scale-105 uppercase tracking-widest text-xs">Watch Media Center</button>
+                    <button onclick="document.getElementById('onoe-section').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 border border-white/20 bg-white/5 text-white font-bold rounded-xl transition-all transform hover:scale-105 uppercase tracking-widest text-xs backdrop-blur-md">Learn About Reform</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="bg-blue-600/10 backdrop-blur-sm border-y border-white/5 py-12 mb-20 text-center text-white font-bold tracking-widest uppercase">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div><div class="text-3xl md:text-4xl font-black text-orange-500 counter" data-target="968">0</div><div class="mt-2 text-gray-400 text-[10px]">Million Voters</div></div>
+                    <div><div class="text-3xl md:text-4xl font-black text-white counter" data-target="543">0</div><div class="mt-2 text-gray-400 text-[10px]">Lok Sabha Seats</div></div>
+                    <div><div class="text-3xl md:text-4xl font-black text-green-500 counter" data-target="1000000">0</div><div class="mt-2 text-gray-400 text-[10px]">Polling Stations</div></div>
+                    <div><div class="text-3xl md:text-4xl font-black text-white">18+</div><div class="mt-2 text-gray-400 text-[10px]">Voting Age</div></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="onoe-section" class="py-24 max-w-7xl mx-auto px-6 text-left">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="lg:w-1/2">
+                    <span class="text-orange-500 font-black tracking-widest uppercase text-[10px]">Policy Initiative</span>
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-white mt-4 mb-8 leading-tight uppercase">One Nation, <br/><span class="text-orange-500">One Election</span></h2>
+                    <p class="text-lg text-gray-400 leading-relaxed mb-8">Synchronization of the Lok Sabha and State Legislative Assembly elections to be held simultaneously. This reform seeks to bring stability and efficiency to the Indian democratic exercise.</p>
+                </div>
+                <div class="lg:w-1/2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-10 glass-card card-hover transition-all text-center">
+                        <i class="fa-solid fa-chart-line text-3xl text-orange-500 mb-5"></i>
+                        <h5 class="font-bold text-white mb-2 uppercase tracking-tight">Economy</h5>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Optimized Spending</p>
+                    </div>
+                    <div class="p-10 glass-card card-hover transition-all text-center">
+                        <i class="fa-solid fa-shield-halved text-3xl text-blue-500 mb-5"></i>
+                        <h5 class="font-bold text-white mb-2 uppercase tracking-tight">Focus</h5>
+                        <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest">Policy Continuity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="learn-visuals" class="py-24 bg-black/20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16"><h2 class="text-4xl font-black text-white uppercase">Media Hub</h2></div>
+                <div class="flex flex-col lg:flex-row gap-12 text-left">
+                    <div class="lg:w-2/3">
+                        <div class="bg-black rounded-[2.5rem] overflow-hidden aspect-video relative border border-white/10 shadow-2xl">
+                            <video id="learnVideo" class="w-full h-full" controls src="Message.mp4"></video>
+                            <div id="learnVideoPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-950/90 text-white p-6 opacity-0 pointer-events-none transition-opacity"><h4 class="text-xl font-bold uppercase tracking-widest animate-pulse">Syncing...</h4></div>
+                        </div>
+                        <div class="mt-10">
+                            <h3 id="learnVideoTitle" class="text-3xl font-black text-white uppercase tracking-tight">Civic Literacy</h3>
+                            <p id="learnVideoDesc" class="text-lg text-gray-400 mt-4 leading-relaxed font-medium">Essential democratic guide on informed decision-making.</p>
+                        </div>
+                    </div>
+                    <div class="lg:w-1/3 bg-white/5 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl space-y-4">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-6 px-2 font-black">Educational Modules</p>
+                            <button onclick="changeLearnVideo('Message.mp4', 'Think, Verify, Decide', 'An essential guide on building a strong democracy through informed decision-making.', this)" class="video-thumbnail w-full text-left p-4 glass-card rounded-2xl border-2 border-transparent flex items-start gap-4 video-active">
+                                <div class="bg-orange-500/20 p-3 rounded-xl text-orange-500 flex-shrink-0"><i class="fa-solid fa-play"></i></div>
+                                <div><h5 class="font-bold text-white text-sm">Core Literacy</h5><p class="text-xs text-gray-500">Think, Verify, Decide</p></div>
+                            </button>
+                            <button onclick="changeLearnVideo('Verify_Information_From_Verified_Sources.mp4', 'Verify Your News', 'Why checking official government sources for election news is vital.', this)" class="video-thumbnail w-full text-left p-4 glass-card rounded-2xl border-2 border-transparent flex items-start gap-4">
+                                <div class="bg-blue-500/20 p-3 rounded-xl text-blue-500 flex-shrink-0"><i class="fa-solid fa-user-shield"></i></div>
+                                <div><h5 class="font-bold text-white text-sm">Fact-Checking News</h5><p class="text-xs text-gray-500">Verification Steps</p></div>
+                            </button>
+                            <button onclick="changeLearnVideo('One_Nation_One_Election_Explained.mp4', 'Understanding ONOE', 'A breakdown of the proposal to synchronize state and national polls.', this)" class="video-thumbnail w-full text-left p-4 glass-card rounded-2xl border-2 border-transparent flex items-start gap-4">
+                                <div class="bg-green-500/20 p-3 rounded-xl text-green-500 flex-shrink-0"><i class="fa-solid fa-layer-group"></i></div>
+                                <div><h5 class="font-bold text-white text-sm">Policy Definition</h5><p class="text-xs text-gray-500">ONOE Overview</p></div>
+                            </button>
+                            <button onclick="changeLearnVideo('One_Nation_One_Election_Explained (1).mp4', 'Economic & Social Impact', 'Analyzing how simultaneous elections reduce public spending.', this)" class="video-thumbnail w-full text-left p-4 glass-card rounded-2xl border-2 border-transparent flex items-start gap-4">
+                                <div class="bg-purple-500/20 p-3 rounded-xl text-purple-500 flex-shrink-0"><i class="fa-solid fa-chart-line"></i></div>
+                                <div><h5 class="font-bold text-white text-sm">Impact Metrics</h5><p class="text-xs text-gray-500">Benefits Analysis</p></div>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="structure" class="py-24 max-w-7xl mx-auto px-6 text-left">
+            <h2 class="text-4xl font-extrabold text-white text-center mb-16 uppercase tracking-tight">Parliamentary Structure</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+                <div class="glass-card p-10 card-hover transition-all border border-white/5">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-green-500/10 p-4 rounded-2xl mr-5 text-green-500"><i class="fa-solid fa-users text-2xl"></i></div>
+                        <h3 class="text-2xl font-bold text-white uppercase tracking-tight">Lok Sabha</h3>
+                    </div>
+                    <p class="text-gray-400 font-medium leading-relaxed">The House of the People. Members are directly elected by citizens for a 5-year term using the First-Past-The-Post system.</p>
+                </div>
+                <div class="glass-card p-10 card-hover transition-all border border-white/5">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-orange-500/10 p-4 rounded-2xl mr-5 text-orange-500"><i class="fa-solid fa-building-columns text-2xl"></i></div>
+                        <h3 class="text-2xl font-bold text-white uppercase tracking-tight">Rajya Sabha</h3>
+                    </div>
+                    <p class="text-gray-400 font-medium leading-relaxed">The Council of States. A permanent body where members are elected by state legislatures, representing federal interests.</p>
+                </div>
+            </div>
+            <div class="glass-card rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="bg-white/5 text-gray-400 text-xs uppercase tracking-[0.2em] font-black"><th class="px-10 py-8">Feature</th><th class="px-10 py-8 text-green-400">Lok Sabha (Lower)</th><th class="px-10 py-8 text-orange-400">Rajya Sabha (Upper)</th></tr></thead>
+                        <tbody class="text-sm divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition-colors font-bold"><td class="px-10 py-6 font-bold text-gray-300">Election Type</td><td class="px-10 py-6 text-gray-400">Direct Election by Citizens</td><td class="px-10 py-6 text-gray-400">Indirect (Elected by State MLAs)</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors font-bold"><td class="px-10 py-6 font-bold text-gray-300">Term Duration</td><td class="px-10 py-6 text-gray-400">5 Years (Dissolvable)</td><td class="px-10 py-6 text-gray-400">Permanent Body</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors font-bold"><td class="px-10 py-6 font-bold text-gray-300">Min. Age Limit</td><td class="px-10 py-6 text-gray-400">25 Years</td><td class="px-10 py-6 text-gray-400">30 Years</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2024 Updates -->
+        <section id="updates-section" class="py-24 bg-black/40 border-t border-white/5 text-left">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold mb-12 border-b border-white/10 pb-8 uppercase tracking-tight font-black">2024 Election Results</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    <div class="lg:col-span-2 glass-card p-10 border border-white/10">
+                        <h3 class="text-xl font-bold mb-8 uppercase tracking-widest">National Seat Share</h3>
+                        <div class="space-y-10">
+                            <div>
+                                <div class="flex justify-between mb-3 font-black uppercase"><span class="text-orange-400 tracking-widest">NDA Alliance</span><span class="text-white font-bold tracking-widest text-right">293 Seats</span></div>
+                                <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden font-bold"><div class="bg-orange-500 h-4 rounded-full" style="width: 54%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-3 font-black uppercase"><span class="text-blue-400 tracking-widest">INDIA Bloc</span><span class="text-white font-bold tracking-widest text-right">234 Seats</span></div>
+                                <div class="w-full bg-white/5 rounded-full h-4 overflow-hidden font-bold"><div class="bg-blue-500 h-4 rounded-full" style="width: 43%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-8 border border-white/10">
+                        <h3 class="text-xl font-bold mb-6 uppercase tracking-widest">Election News</h3>
+                        <div id="learn-news-feed" class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 font-medium"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- QUIZ SECTION (Persistent) -->
+    <section id="quiz-section" class="relative z-10 w-full py-24 bg-blue-900/10 backdrop-blur-xl border-y border-white/10 text-center lg:text-left">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center gap-16">
+            <div class="lg:w-1/3">
+                <span class="text-orange-500 font-black tracking-[0.3em] uppercase text-[10px]">Knowledge Pulse</span>
+                <h2 class="text-4xl font-extrabold text-white mt-3 mb-5 uppercase tracking-tight leading-tight">Civic <br/>Awareness Quiz</h2>
+                <p class="text-slate-400 font-medium leading-relaxed">Test your understanding of the Indian democratic framework.</p>
+            </div>
+            <div class="lg:w-2/3 w-full">
+                <div id="quiz-root" class="glass-card p-10 md:p-16 shadow-2xl min-h-[350px] flex flex-col justify-center border border-white/5 relative overflow-hidden text-left"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <section class="border-y border-white/5 py-16 bg-slate-900/40 backdrop-blur-sm overflow-hidden">
+        <div class="marquee-container">
+            <div class="animate-scroll">
+                <div class="flex items-center gap-20 px-10">
+                    <a href="https://www.bjp.org/" target="_blank" class="party-icon group"><span class="text-4xl">🪷</span><span class="party-name">BJP</span></a>
+                    <a href="https://aamaadmiparty.org/" target="_blank" class="party-icon group"><span class="text-4xl">🧹</span><span class="party-name">AAP</span></a>
+                    <a href="https://inc.in/" target="_blank" class="party-icon group"><span class="text-4xl">✋</span><span class="party-name">INC</span></a>
+                    <a href="https://bahujansamajparty.net/" target="_blank" class="party-icon group"><span class="text-4xl">🐘</span><span class="party-name">BSP</span></a>
+                    <a href="https://cpim.org/" target="_blank" class="party-icon group"><span class="text-4xl">☭</span><span class="party-name">CPI(M)</span></a>
+                    <a href="https://jdu.org.in/" target="_blank" class="party-icon group"><span class="text-4xl">➤</span><span class="party-name">JDU</span></a>
+                    <a href="https://rashtriyalokdal.com/press-releases/" target="_blank" class="party-icon group"><span class="text-4xl">🌾</span><span class="party-name">RLD</span></a>
+                </div>
+                <div class="flex items-center gap-20 px-10">
+                    <a href="https://www.bjp.org/" target="_blank" class="party-icon group"><span class="text-4xl">🪷</span><span class="party-name">BJP</span></a>
+                    <a href="https://aamaadmiparty.org/" target="_blank" class="party-icon group"><span class="text-4xl">🧹</span><span class="party-name">AAP</span></a>
+                    <a href="https://inc.in/" target="_blank" class="party-icon group"><span class="text-4xl">✋</span><span class="party-name">INC</span></a>
+                    <a href="https://bahujansamajparty.net/" target="_blank" class="party-icon group"><span class="text-4xl">🐘</span><span class="party-name">BSP</span></a>
+                    <a href="https://cpim.org/" target="_blank" class="party-icon group"><span class="text-4xl">☭</span><span class="party-name">CPI(M)</span></a>
+                    <a href="https://jdu.org.in/" target="_blank" class="party-icon group"><span class="text-4xl">➤</span><span class="party-name">JDU</span></a>
+                    <a href="https://rashtriyalokdal.com/press-releases/" target="_blank" class="party-icon group"><span class="text-4xl">🌾</span><span class="party-name">RLD</span></a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-col"><div class="footer-title uppercase tracking-widest text-[10px]">Contact info</div><p class="footer-text font-bold">feedback: support@civiclens.demo <br> press: media@civiclens.demo</p></div>
+            <div class="footer-col">
+                <div class="footer-title uppercase tracking-widest text-[10px]">Privacy information</div>
+                <p class="footer-text font-bold">Civic Lens is a prototype interface. No official voter data is stored here; links take you to secure government portals like the ECI.</p>
+            </div>
+            <div class="footer-col footer-links">
+                <div class="footer-title uppercase tracking-widest text-[10px]">Official Resources</div>
+                <a href="https://www.eci.gov.in/" target="_blank" class="font-bold text-white">Election Commission of India</a>
+                <a href="https://india.gov.in/" target="_blank" style="margin-top: 15px; display: block;" class="font-bold text-white">National Portal of India</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-brand-section">
+                <img src="logo.png" 
+                     alt="Civic Lens" 
+                     class="footer-logo">
+                <div class="footer-brand uppercase tracking-tighter font-black tracking-widest">Civic Lens</div>
+            </div>
+            <p class="footer-disclaimer uppercase tracking-[0.2em] text-[9px] mt-2 font-black text-slate-500">Prototype interface for civic awareness. indicative only.</p>
+        </div>
+    </footer>
+
+    <!-- CHATBOT (Assistant) -->
+    <div class="chat-widget">
+        <button id="chatToggle" class="chat-toggle" aria-label="Open assistant">
+            <div class="chat-toggle-inner">💬</div>
+        </button>
+
+        <section id="chatWindow" class="chat-window hidden" aria-label="Election assistant chat">
+            <header class="chat-header">
+                <div>
+                    <p class="chat-title">Election Assistant</p>
+                    <p class="chat-subtitle">Questions on voting, EVMs, rumours, and reforms.</p>
+                </div>
+                <button id="chatClose" class="chat-close">✕</button>
+            </header>
+            <div id="chatMessages" class="chat-messages custom-scrollbar"></div>
+            <div class="chat-footer">
+                <div class="chat-quick-grid">
+                    <button class="chat-quick" data-q="What is One Nation One Election?">ONOE basics</button>
+                    <button class="chat-quick" data-q="Is EVM hacking real?">EVM security</button>
+                    <button class="chat-quick" data-q="How do I find my polling booth?">Polling booth</button>
+                    <button class="chat-quick" data-q="How can I apply for a Voter ID?">Voter ID</button>
+                    <button class="chat-quick" data-q="How to handle WhatsApp rumours?">Rumours</button>
+                    <button class="chat-quick" data-q="What is the Model Code of Conduct?">Model Code</button>
+                </div>
+                <div class="chat-input-row">
+                    <input id="chatInput" type="text" placeholder="Ask a short election question...">
+                    <button id="chatSend">→</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+
+        // TAB MANAGEMENT
+        window.showTab = function(tabId) {
+            document.querySelectorAll('#view-home, #view-learn, #view-factcheck').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(n => { 
+                n.classList.remove('active', 'text-white'); 
+                n.classList.add('text-slate-400'); 
+            });
+            
+            const activeView = document.getElementById('view-' + tabId);
+            if(activeView) activeView.classList.remove('hidden');
+            
+            const activeNav = document.getElementById('nav-' + tabId);
+            if(activeNav) {
+                activeNav.classList.add('active', 'text-white');
+                activeNav.classList.remove('text-slate-400');
+            }
+            
+            window.scrollTo(0, 0);
+            if(tabId === 'learn') animateCounters();
+            if(tabId === 'factcheck') renderVerificationDefaults();
+        }
+
+        window.scrollToSection = function(id) {
+            showTab('home');
+            setTimeout(() => { 
+                const el = document.getElementById(id);
+                if(el) el.scrollIntoView({ behavior: 'smooth' }); 
+            }, 150);
+        }
+
+        // STATS COUNTER
+        const animateCounters = () => {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                counter.innerText = "0";
+                const update = () => {
+                    const count = +counter.innerText.replace(/,/g, '');
+                    const inc = Math.max(1, Math.ceil(target / 40));
+                    if (count < target) {
+                        counter.innerText = Math.min(target, count + inc).toLocaleString();
+                        setTimeout(update, 30);
+                    } else {
+                        counter.innerText = target.toLocaleString();
+                    }
+                };
+                update();
+            });
+        }
+
+        // ------------------- ENHANCED FACT CHECK LOGIC (VERIFY.IN) -------------------
+
+        async function fetchNews(query) {
+  const user = query && query.trim() ? query.trim() : '';
+
+  try {
+    const res = await fetch(`/api/gnews?q=${encodeURIComponent(user)}`);
+    if (!res.ok) throw new Error('Server error');
+
+    const data = await res.json();
+    const articles = Array.isArray(data.articles) ? data.articles : [];
+
+    const indiaHints = [
+      'india', 'indian', 'bharat', 'lok sabha', 'vidhan sabha',
+      'eci', 'bjp', 'congress', 'aap', 'modi', 'rahul gandhi','evm','poll','ballot','rajya sabha'
+    ];
+
+    return articles.filter(a => {
+      const t = `${a.title} ${a.description || ''}`.toLowerCase();
+      const src = (a.source?.name || '').toLowerCase();
+      return indiaHints.some(w => t.includes(w)) ||
+             src.includes('india') || src.includes('indian');
+    });
+
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+
+        function classifyArticle(article) {
+            const text = `${article.title} ${article.description || ''}`.toLowerCase();
+            const falseSignals = ['fake', 'false', 'hoax', 'doctored', 'misleading', 'fact-check', 'debunked'];
+            const unverifiedSignals = ['viral', 'rumour', 'rumor', 'unverified', 'alleged', 'forwarded'];
+            const officialSignals = ['eci', 'election commission', 'official', 'clarification', 'pib'];
+
+            let status = 'unverified', confidence = 55, reason = 'Neutral reporting language, no strong signals either way.', tags = ['News'];
+
+            if (falseSignals.some(w => text.includes(w))) {
+                status = 'false'; confidence = 85; reason = 'Includes language used in debunks and fact-checks.'; tags = ['Hoax Flagged'];
+            } else if (unverifiedSignals.some(w => text.includes(w))) {
+                status = 'unverified'; confidence = 60; reason = 'Talks about viral or alleged claims without clear confirmation.'; tags = ['Viral Claim'];
+            } else if (officialSignals.some(w => text.includes(w))) {
+                status = 'verified'; confidence = 80; reason = 'Mentions official institutions or primary documentation.'; tags = ['Official Source'];
+            }
+            return { status, confidence, reason, tags };
+        }
+
+        window.verifyClaim = async function(customQuery) {
+            const query = customQuery || document.getElementById('queryInput').value.trim();
+            const container = document.getElementById('resultsContainer');
+            const loader = document.getElementById('loadingBox');
+            const note = document.getElementById('resultsNote');
+
+            container.innerHTML = '';
+            loader.classList.remove('hidden');
+            note.classList.add('hidden');
+
+            const articles = await fetchNews(query);
+            loader.classList.add('hidden');
+
+            if (!articles.length) {
+                note.innerHTML = `No election coverage found for "<strong>${query || 'india elections'}</strong>".`;
+                note.classList.remove('hidden');
+                return;
+            }
+
+            articles.forEach(art => {
+                const { status, confidence, reason, tags } = classifyArticle(art);
+                const label = status === 'verified' ? 'Verified' : status === 'false' ? 'False-like' : 'Unclear';
+                const pillClass = status === 'verified' ? 'status-verified' : status === 'false' ? 'status-false' : 'status-unverified';
+
+                const card = document.createElement('article');
+                card.className = 'result-card glass-card fade-in p-8 border-l-4 border-orange-500';
+                card.innerHTML = `
+                    <div class="status-pill ${pillClass}"><span class="status-dot"></span>${label}</div>
+                    <h3 class="result-title uppercase tracking-tight mb-3 font-black"><a href="${art.url}" target="_blank">${art.title}</a></h3>
+                    <p class="result-desc font-medium text-slate-400">${art.description || 'Summary not available.'}</p>
+                    <p class="result-reason font-bold bg-white/5 p-4 rounded-xl mt-4 text-slate-300 text-xs italic">🔍 ${reason}</p>
+                    <div class="mt-6 flex flex-wrap gap-2">
+                        ${tags.map(t => `<span class="result-tag">${t}</span>`).join('')}
+                    </div>
+                    <div class="result-meta font-black text-[9px] uppercase tracking-widest mt-6 text-slate-500">
+                        Source: ${art.source.name} | ${new Date(art.publishedAt).toLocaleDateString('en-IN')} | Confidence: ${confidence}%
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            note.innerHTML = `Showing ${articles.length} India election-related articles.`;
+            note.classList.remove('hidden');
+        }
+
+        window.renderVerificationDefaults = function() {
+            const tlContainer = document.getElementById('timelineList');
+            if (tlContainer && tlContainer.children.length === 0) {
+                const tlData = [
+                    { l: 'Early Cycles', p: '1951-1967', t: 'The Original Pattern', d: 'India successfully held general and state elections together for nearly two decades.' },
+                    { l: 'Formal Review', p: '2023-Present', t: 'High-Level Committee', d: 'A committee chaired by the Former President examines legal roadmaps for aligned polls.' }
+                ];
+                tlData.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'timeline-item';
+                    li.innerHTML = `<div class="timeline-dot"></div><div class="timeline-card"><div class="flex justify-between mb-2"><span class="timeline-chip uppercase text-[9px] tracking-widest font-black">${item.l}</span><span class="text-xs text-slate-500 font-black">${item.p}</span></div><h4 class="font-bold uppercase tracking-tight font-black">${item.t}</h4><p class="text-xs text-slate-400 mt-2 leading-relaxed font-bold">${item.d}</p></div>`;
+                    tlContainer.appendChild(li);
+                });
+            }
+
+            const mythGrid = document.getElementById('mythsGrid');
+            if (mythGrid && mythGrid.children.length === 0) {
+                const myths = [
+                    { m: 'EVM machines can be hacked remotely via Wi-Fi.', f: 'EVMs are standalone hardware units with no wireless communication modules.' },
+                    { m: 'One Nation One Election is a brand new concept.', f: 'India originally conducted simultaneous elections in 1951, 1957, 1962, and 1967.' }
+                ];
+                myths.forEach(myth => {
+                    const card = document.createElement('div');
+                    card.className = 'myth-card glass-card border-red-500/20 p-8';
+                    card.innerHTML = `<div class="myth-label font-black tracking-widest uppercase text-[9px]">Rumour Flag</div><p class="text-sm text-slate-200 font-bold leading-relaxed mb-4">${myth.m}</p><div class="fact-label font-black tracking-widest uppercase text-[9px] text-green-400">Verified Fact</div><p class="text-sm text-slate-400 leading-relaxed font-medium font-bold">${myth.f}</p>`;
+                    mythGrid.appendChild(card);
+                });
+            }
+            if (!document.getElementById('resultsContainer').children.length) verifyClaim('India Election');
+        }
+
+        // ------------------- CHATBOT (ASSISTANT) -------------------
+
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatClose = document.getElementById('chatClose');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        const quickButtons = document.querySelectorAll('.chat-quick');
+
+        let chatStarted = false;
+
+        function addChatMessage(role, text) {
+            const row = document.createElement('div');
+            row.className = `chat-message-row ${role}`;
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${role} fade-in`;
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            row.appendChild(bubble);
+            chatMessages.appendChild(row);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function generateChatReply(text) {
+            const q = text.toLowerCase();
+            if (q.includes('one nation one election') || q.includes('simultaneous')) {
+                return '"One Nation One Election" syncs Lok Sabha + State elections. Was norm 1951-67. Needs constitutional amendments + logistics.';
+            }
+            if (q.includes('evm') || q.includes('machine') || q.includes('vvpat')) {
+                return 'EVMs are standalone, no internet/network. Secured by seals, randomization, mock polls, VVPAT paper trails, Supreme Court approved.';
+            }
+            if (q.includes('polling booth')) {
+                return 'Find booth at voters.eci.gov.in or Voter Helpline app. Search by EPIC/mobile number. Download voter slip + map.';
+            }
+            if (q.includes('voter id')) {
+                return 'Apply at voters.eci.gov.in → Form 6. Submit Aadhaar/Passport, get EPIC in 21-30 days. Track status online.';
+            }
+            if (q.includes('whatsapp') || q.includes('rumours')) {
+                return 'Forward WhatsApp rumours to 55 00055 (PIB Fact Check). Verify at factcheck.in. Never share unverified forwards.';
+            }
+            if (q.includes('model code') || q.includes('conduct')) {
+                return 'Model Code of Conduct: No new schemes, no govt machinery misuse, equal access, no personal attacks, 48hr silence before polls.';
+            }
+            return 'Ask about ONOE, EVM security, voter ID, polling booth, WhatsApp rumours, or Model Code of Conduct.';
+        }
+
+        chatToggle.onclick = () => {
+            chatWindow.classList.toggle('hidden');
+            if (!chatStarted) {
+                addChatMessage('assistant', 'Hi, I collect answers about elections, voting machines, and reforms. What would you like to ask?');
+                chatStarted = true;
+            }
+        };
+
+        chatClose.onclick = () => chatWindow.classList.add('hidden');
+
+        const handleChatSubmit = () => {
+            const val = chatInput.value.trim();
+            if (!val) return;
+            addChatMessage('user', val);
+            chatInput.value = '';
+            setTimeout(() => addChatMessage('assistant', generateChatReply(val)), 300);
+        };
+
+        chatSend.onclick = handleChatSubmit;
+        chatInput.onkeydown = (e) => { if(e.key === 'Enter') handleChatSubmit(); };
+        quickButtons.forEach(btn => {
+            btn.onclick = () => {
+                const q = btn.getAttribute('data-q');
+                addChatMessage('user', q);
+                setTimeout(() => addChatMessage('assistant', generateChatReply(q)), 300);
+            };
+        });
+
+        // ------------------- UPDATED QUIZ LOGIC -------------------
+
+// ------------------- FIXED QUIZ LOGIC -------------------
+
+const quizData = [
+  {
+    question: "Was 'One Nation, One Election' the norm in India between 1951 and 1967?",
+    answer: true,
+    explanation: "Simultaneous elections were held in 1951-52, 1957, 1962, and 1967 before the cycle was disrupted."
+  },
+  {
+    question: "Can ONOE be implemented without amending the Constitution of India?",
+    answer: false,
+    explanation: "It requires amending Articles 83, 85, 172, and 174 to synchronize the terms of Parliament and Assemblies."
+  },
+  {
+    question: "Does the current proposal include synchronizing Local Body (Panchayat) elections immediately?",
+    answer: false,
+    explanation: "The primary focus is on Lok Sabha and State Assemblies; Local bodies are under state jurisdiction and come later."
+  },
+  {
+    question: "Will ONOE reduce the frequency of the 'Model Code of Conduct' being in force?",
+    answer: true,
+    explanation: "Consolidating elections prevents the frequent developmental pauses caused by the Model Code of Conduct."
+  },
+  {
+    question: "Can 'One Nation, One Election' be rolled out overnight without large changes to election infrastructure and planning?",
+    answer: false,
+    explanation: "Implementing ONOE needs major logistical preparation—more EVMs, security, and trained staff—so it cannot be done overnight without risking confusion and mismanagement."
+  },
+  {
+    question: "Does frequent circulation of fake election news and deepfake videos weaken trust in democratic institutions?",
+    answer: true,
+    explanation: "Misinformation and deepfakes can confuse voters, fuel hatred, and make people doubt whether results are fair, which slowly erodes trust in democracy."
+  },
+  {
+    question: "Is it safe for voters to forward political messages on social media without checking if they are from a verified or credible source?",
+    answer: false,
+    explanation: "Forwarding unverified messages helps rumours spread faster than fact-checks, which can mislead voters and unfairly influence election outcomes."
+  },
+  {
+    question: "Can responsible fact-checking and verification of election claims help protect democracy from misinformation?",
+    answer: true,
+    explanation: "Fact-checking gives voters accurate information, counters false narratives, and supports informed, independent choices at the ballot box."
+  }
+];
+
+let currentStep = 0;
+let score = 0;
+let showFeedback = false;
+let isCorrect = null;
+
+window.renderQuiz = function() {
+  const root = document.getElementById('quiz-root');
+  
+  // FIXED: Check for quiz completion FIRST (index 0-7, length 8)
+  if (currentStep >= quizData.length) {
+    root.innerHTML = `
+      <div class="max-w-2xl mx-auto text-center fade-in py-12 px-6">
+        <div class="text-7xl mb-8 mx-auto">🏆</div>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white uppercase tracking-tight mb-6">
+          Quiz Complete! 🇮🇳
+        </h2>
+        <div class="bg-gradient-to-r from-orange-500/20 to-orange-600/20 backdrop-blur-sm border-2 border-orange-500/30 rounded-3xl p-8 mb-10 shadow-2xl">
+          <p class="text-slate-300 text-lg mb-2">Your Score:</p>
+          <p class="text-5xl md:text-6xl font-black bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent tracking-tight">
+            ${score}/${quizData.length}
+          </p>
+        </div>
+        <button onclick="resetQuiz()" 
+                class="px-12 py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black uppercase tracking-widest rounded-3xl text-sm shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] border-2 border-orange-500/50">
+          🔄 Restart Quiz
+        </button>
+      </div>`;
+    return;
+  }
+
+  const q = quizData[currentStep];
+  const progress = ((currentStep + 1) / quizData.length) * 100;
+
+  if (!showFeedback) {
+    root.innerHTML = `
+      <div class="fade-in text-left max-w-2xl mx-auto p-8">
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200/50 h-2 rounded-full mb-8 backdrop-blur-sm border border-gray-200/50">
+          <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-700" 
+               style="width: ${progress}%"></div>
+        </div>
+        
+        <!-- Question Counter -->
+        <span class="text-xs md:text-sm text-orange-400 font-black uppercase tracking-[0.4em] block mb-8">
+          Knowledge Pulse • Q${currentStep + 1}/${quizData.length}
+        </span>
+        
+        <!-- Question -->
+        <h3 class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white my-10 leading-tight tracking-tight min-h-[80px] md:min-h-[60px]">
+          ${q.question.replace(/'/g, "&#39;")}
+        </h3>
+        
+        <!-- Answer Buttons -->
+        <div class="grid grid-cols-2 gap-6">
+          <button onclick="checkAnswer(true)" 
+                  class="quiz-option-btn flex-1 py-8 md:py-10 font-black text-white uppercase text-sm md:text-base tracking-widest 
+                         bg-white/5 backdrop-blur-md border-2 border-green-400/50 hover:border-green-400 hover:bg-green-500/10 
+                         transition-all duration-300 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1">
+            ✅ TRUE
+          </button>
+          <button onclick="checkAnswer(false)" 
+                  class="quiz-option-btn flex-1 py-8 md:py-10 font-black text-white uppercase text-sm md:text-base tracking-widest 
+                         bg-white/5 backdrop-blur-md border-2 border-red-400/50 hover:border-red-400 hover:bg-red-500/10 
+                         transition-all duration-300 rounded-3xl shadow-xl hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1">
+            ❌ FALSE
+          </button>
+        </div>
+      </div>`;
+  } else {
+    root.innerHTML = `
+      <div class="fade-in text-left max-w-2xl mx-auto p-8">
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200/50 h-2 rounded-full mb-8 backdrop-blur-sm border border-gray-200/50">
+          <div class="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full transition-all duration-700" 
+               style="width: ${progress}%"></div>
+        </div>
+        
+        <!-- Question Counter -->
+        <span class="text-xs md:text-sm text-orange-400 font-black uppercase tracking-[0.4em] block mb-8">
+          Knowledge Pulse • Q${currentStep + 1}/${quizData.length}
+        </span>
+        
+        <!-- Feedback -->
+        <div class="p-10 md:p-12 rounded-3xl mb-10 shadow-2xl backdrop-blur-lg transition-all duration-500 ${
+          isCorrect ? 'bg-green-500/15 border-green-500/40' : 'bg-red-500/15 border-red-500/40'
+        } border-4 shadow-green-500/25 shadow-lg">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="text-3xl ${
+              isCorrect ? 'text-green-400' : 'text-red-400'
+            }">${isCorrect ? '✓' : '✕'}</div>
+            <p class="font-black text-xl uppercase tracking-[0.3em] text-white ${
+              isCorrect ? 'text-green-300' : 'text-red-300'
+            }">
+              ${isCorrect ? 'Verified Correct' : 'Incorrect Answer'}
+            </p>
+          </div>
+          <p class="text-lg md:text-xl text-slate-200 leading-relaxed font-semibold">${q.explanation}</p>
+        </div>
+        
+        <!-- Next Button -->
+        <button onclick="nextQuestion()" 
+                class="w-full py-6 md:py-7 bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 
+                       hover:from-orange-600 hover:via-orange-700 hover:to-orange-800 text-white 
+                       font-black uppercase tracking-widest rounded-3xl text-sm md:text-base shadow-2xl 
+                       transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] border-2 border-orange-500/50">
+          ${currentStep + 1 === quizData.length ? '🎯 See Final Results' : '➤ Next Question'}
+        </button>
+      </div>`;
+  }
+};
+
+window.checkAnswer = (userChoice) => {
+  // FIXED: Prevent multiple clicks more reliably
+  if (showFeedback) return;
+  
+  const q = quizData[currentStep];
+  isCorrect = userChoice === q.answer;
+  
+  if (isCorrect) {
+    score++;
+  }
+  
+  showFeedback = true;
+  renderQuiz();
+};
+
+window.nextQuestion = () => {
+  // FIXED: Proper state reset and progression
+  showFeedback = false;
+  isCorrect = null;
+  
+  if (currentStep + 1 < quizData.length) {
+    currentStep++;
+  } else {
+    // Force quiz completion when on last question
+    currentStep = quizData.length;
+  }
+  
+  renderQuiz();
+};
+
+window.resetQuiz = () => {
+  // FIXED: Complete state reset
+  currentStep = 0;
+  score = 0;
+  showFeedback = false;
+  isCorrect = null;
+  renderQuiz();
+};
+
+// Initialize quiz on load
+if (document.getElementById('quiz-root')) {
+  renderQuiz();
+}
+
+
+
+        // ------------------- LEARN VIDEO LOGIC -------------------
+
+        window.changeLearnVideo = (src, title, desc, btn) => {
+            const v = document.getElementById('learnVideo');
+            const placeholder = document.getElementById('learnVideoPlaceholder');
+            placeholder.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                v.src = src; v.play();
+                document.getElementById('learnVideoTitle').innerText = title;
+                document.getElementById('learnVideoDesc').innerText = desc;
+                document.querySelectorAll('#view-learn .video-thumbnail').forEach(b => b.classList.remove('video-active'));
+                btn.classList.add('video-active');
+                placeholder.classList.add('opacity-0', 'pointer-events-none');
+            }, 400);
+        }
+
+        // ------------------- INITIALIZE -------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuiz();
+            showTab('home');
+            
+            const learnNews = [
+                { title: "Voter Turnout Insights", desc: "Official data on voter participation across the 2024 general election.", color: "orange", link: "https://results.eci.gov.in/" },
+                { title: "Logistics Analytics", desc: "Deep dive into the management required for 1 million booths.", color: "blue", link: "https://www.eci.gov.in/" }
+            ];
+            const newsContainerLearn = document.getElementById('learn-news-feed');
+            if(newsContainerLearn) {
+                learnNews.forEach(news => {
+                    const item = document.createElement('div');
+                    item.className = `glass-card p-6 rounded-2xl border-l-4 border-${news.color}-500 mb-4 hover:bg-white/10 transition-all`;
+                    item.innerHTML = `<h4 class="text-white font-bold text-sm uppercase mb-2 tracking-tight">${news.title}</h4><p class="text-gray-400 text-[11px] font-bold mb-4 leading-relaxed">${news.desc}</p><a href="${news.link}" target="_blank" class="text-[9px] font-black text-blue-400 uppercase tracking-widest hover:underline">Read More ➔</a>`;
+                    newsContainerLearn.appendChild(item);
+                });
+            }
+            
+            const notes = document.getElementById('notesArea');
+            notes.value = localStorage.getItem('civiclens_notes') || '';
+            notes.oninput = () => {
+                localStorage.setItem('civiclens_notes', notes.value);
+                document.getElementById('notesStatus').innerText = 'Auto-saved at ' + new Date().toLocaleTimeString();
+            };
+        });
+
+        window.clearNotes = () => { if(confirm("Reset all notes?")) { document.getElementById('notesArea').value = ''; localStorage.removeItem('civiclens_notes'); }};
+    </script>
+</body>
+</html>
