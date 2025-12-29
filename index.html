@@ -712,33 +712,45 @@
 
         // ------------------- ENHANCED FACT CHECK LOGIC (VERIFY.IN) -------------------
 
-        async function fetchNews(query) {
-  const user = query && query.trim() ? query.trim() : '';
+    async function fetchNews(userQuery = '') {
+        const isUserSearch = userQuery && userQuery.trim().length > 0;
 
-  try {
-    const res = await fetch(`/api/gnews?q=${encodeURIComponent(user)}`);
-    if (!res.ok) throw new Error('Server error');
+        const DEFAULT_QUERY =
+        'India elections OR Indian government OR Supreme Court India';
 
-    const data = await res.json();
-    const articles = Array.isArray(data.articles) ? data.articles : [];
+        const q = isUserSearch ? userQuery.trim() : DEFAULT_QUERY;
 
-    const indiaHints = [
-      'india', 'indian', 'bharat', 'lok sabha', 'vidhan sabha',
-      'eci', 'bjp', 'congress', 'aap', 'modi', 'rahul gandhi','evm','poll','ballot','rajya sabha'
-    ];
+        try {
+            const res = await fetch(`/api/gnews?q=${encodeURIComponent(q)}`);
+            if (!res.ok) throw new Error('API error');
 
-    return articles.filter(a => {
-      const t = `${a.title} ${a.description || ''}`.toLowerCase();
-      const src = (a.source?.name || '').toLowerCase();
-      return indiaHints.some(w => t.includes(w)) ||
-             src.includes('india') || src.includes('indian');
-    });
+                const data = await res.json();
+                let articles = Array.isArray(data.articles) ? data.articles : [];
 
-  } catch (e) {
-    console.error(e);
-    return [];
+                // 🔑 CONDITIONAL FILTERING
+                if (!isUserSearch) {
+                // strict filter ONLY for initial load
+                    const indiaKeywords = [
+                    'india', 'indian', 'bharat',
+                    'election', 'parliament', 'supreme court',
+                    'government', 'eci', 'policy'
+                ];
+
+                articles = articles.filter(a => {
+                    const text = `${a.title} ${a.description || ''}`.toLowerCase();
+                    return indiaKeywords.some(k => text.includes(k));
+                });
+                }
+
+    // 🧠 Normalize output
+            return articles.slice(0, 10);
+
+  } catch (err) {
+        console.error(err);
+        return [];
   }
 }
+
 
 
         function classifyArticle(article) {
@@ -802,6 +814,40 @@
             note.innerHTML = `Showing ${articles.length} India election-related articles.`;
             note.classList.remove('hidden');
         }
+        function renderNews(articles) {
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = ''; // clear old cards
+
+            if (!articles || articles.length === 0) {
+                container.innerHTML = '<p>No related news found.</p>';
+                return;
+            }
+
+            articles.forEach(article => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+
+                card.innerHTML = `
+                <h3>${article.title}</h3>
+                <p>${article.description || 'No description available'}</p>
+                <a href="${article.url}" target="_blank">Read more</a>
+                `;
+
+                container.appendChild(card);
+            });
+            }
+        document.addEventListener('DOMContentLoaded', async () => {
+            const news = await fetchNews();
+            renderNews(news);
+            });
+        
+        async function onSearch() {
+            const q = document.getElementById('searchInput').value;
+            const news = await fetchNews(q);
+            renderNews(news);
+            }
+
+
 
         window.renderVerificationDefaults = function() {
             const tlContainer = document.getElementById('timelineList');
